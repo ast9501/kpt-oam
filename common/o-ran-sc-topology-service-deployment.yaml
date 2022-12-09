@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose --file docker-compose.yml convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: o-ran-sc-topology-service
+  name: o-ran-sc-topology-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: o-ran-sc-topology-service
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose --file docker-compose.yml convert
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/smo: "true"
+        io.kompose.service: o-ran-sc-topology-service
+    spec:
+      containers:
+        - image: o-ran-sc-topology-service
+          name: o-ran-sc-topology-service
+          ports:
+            - containerPort: 8181
+          resources: {}
+          volumeMounts:
+            - mountPath: /opt/dev/deploy/data/tapi-common-operational.json
+              name: o-ran-sc-topology-service-claim0
+            - mountPath: /opt/dev/deploy/data/tapi-common-running.json
+              name: o-ran-sc-topology-service-claim1
+      hostname: o-ran-sc-topology-service
+      restartPolicy: Always
+      volumes:
+        - name: o-ran-sc-topology-service-claim0
+          persistentVolumeClaim:
+            claimName: o-ran-sc-topology-service-claim0
+        - name: o-ran-sc-topology-service-claim1
+          persistentVolumeClaim:
+            claimName: o-ran-sc-topology-service-claim1
+status: {}

@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose --file docker-compose.yml convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: dmaap
+  name: dmaap
+spec:
+  ports:
+    - name: "3904"
+      port: 3904
+      targetPort: 3904
+    - name: "3905"
+      port: 3905
+      targetPort: 3905
+  selector:
+    io.kompose.service: dmaap
+status:
+  loadBalancer: {}

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose --file docker-compose.yml convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: dmaap
+  name: dmaap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: dmaap
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose --file docker-compose.yml convert
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/smo: "true"
+        io.kompose.service: dmaap
+    spec:
+      containers:
+        - env:
+            - name: enableCadi
+              value: "false"
+          image: dmaap
+          name: onap-dmaap
+          ports:
+            - containerPort: 3904
+            - containerPort: 3905
+          resources: {}
+          volumeMounts:
+            - mountPath: /appl/dmaapMR1/bundleconfig/etc/appprops/MsgRtrApi.properties
+              name: dmaap-claim0
+            - mountPath: /appl/dmaapMR1/bundleconfig/etc/logback.xml
+              name: dmaap-claim1
+            - mountPath: /appl/dmaapMR1/etc/cadi.properties
+              name: dmaap-claim2
+      restartPolicy: Always
+      volumes:
+        - name: dmaap-claim0
+          persistentVolumeClaim:
+            claimName: dmaap-claim0
+        - name: dmaap-claim1
+          persistentVolumeClaim:
+            claimName: dmaap-claim1
+        - name: dmaap-claim2
+          persistentVolumeClaim:
+            claimName: dmaap-claim2
+status: {}

@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose --file docker-compose.yml convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: wireshark
+  name: wireshark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: wireshark
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose --file docker-compose.yml convert
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/smo: "true"
+        io.kompose.service: wireshark
+    spec:
+      containers:
+        - env:
+            - name: PGID
+              value: "1000"
+            - name: PUID
+              value: "1000"
+            - name: TZ
+              value: Europe/London
+          image: wireshark
+          name: wireshark
+          resources: {}
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          volumeMounts:
+            - mountPath: /config
+              name: wireshark-claim0
+      restartPolicy: Always
+      volumes:
+        - name: wireshark-claim0
+          persistentVolumeClaim:
+            claimName: wireshark-claim0
+status: {}

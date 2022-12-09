@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose --file docker-compose.yml convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: o-ran-sc-topology-service
+  name: o-ran-sc-topology-service
+spec:
+  ports:
+    - name: "18181"
+      port: 18181
+      targetPort: 8181
+  selector:
+    io.kompose.service: o-ran-sc-topology-service
+status:
+  loadBalancer: {}
